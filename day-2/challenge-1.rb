@@ -1,6 +1,8 @@
-data = File.read("input.txt").split.each_slice(2).map { |move| { move[0].to_sym => move[1].to_i }}
+data = File.read("input.txt").split.each_slice(2).map do |turn| 
+  { turn[0].to_sym => turn[1].to_i }
+end
 
-h = Hash.new(0)
-sum = data.each_with_object(h) { |hash, h| hash.each { |key, value| h[key] += value }}
+sum = Hash.new(0)
+data.each_with_object(sum) { |hash, sum| hash.each { |key, value| sum[key] += value }}
 
 p sum[:forward] * (sum[:down] - sum[:up])
