@@ -13,6 +13,6 @@ data.each do |move|
   end
 end
 
-p x 
+p x
 p y
 p x*y
