@@ -1,3 +1,3 @@
 data = File.read("input.txt").split.map(&:to_i)
 
-puts data.select.with_index {|depth, i| depth > data[i-1] }.count
+puts data.each_cons(2).select {|x| x[1] > x[0] }.count
