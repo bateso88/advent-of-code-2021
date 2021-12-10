@@ -1,4 +1,3 @@
-
 def calculate(gas) # 0 for o2 and -1 for co2
   data = File.read("input.txt").split.map(&:chars).map {|arr| arr.map(&:to_i) }
   i=0
