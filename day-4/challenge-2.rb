@@ -6,8 +6,6 @@ numbers = [
             49,31,88,26,96,16,1,75,87,6,61,4,68,32,25,55,44,15,45,92,35
           ]
 
-# p boards
-
 def has_won?(board) 
   rows = board.each_slice(5).map { |row| row }
   (rows + rows.transpose).any? { |combo| combo.sum == 0 }
@@ -17,8 +15,9 @@ winners = []
 
 numbers.each do |pick| 
   boards.map! { |board| board.map { |num| num == pick ? 0 : num }}
-  boards.each { |board| winners << {board: board, pick: pick, score: (board.sum * pick)} if has_won?(board) }
+  # boards.each { |board| winners << {board: board, pick: pick, score: (board.sum * pick)} if has_won?(board) }
   boards.reject! {|board| has_won?(board)}
+  return {board: board, pick: pick, score: (board.sum * pick)} if boards.length == 1
 end
 
 p winners.first
