@@ -11,14 +11,13 @@ def has_won?(board)
   (rows + rows.transpose).any? { |combo| combo.sum == 0 }
 end
 
-winners = []
+scores = []
 
 numbers.each do |pick| 
   boards.map! { |board| board.map { |num| num == pick ? 0 : num }}
-  # boards.each { |board| winners << {board: board, pick: pick, score: (board.sum * pick)} if has_won?(board) }
-  boards.reject! {|board| has_won?(board)}
-  return {board: board, pick: pick, score: (board.sum * pick)} if boards.length == 1
+        .each { |board| scores << board.sum * pick if has_won?(board) }
+        .reject! {|board| has_won?(board)}
 end
 
-p winners.first
-p winners.last
+p scores.first
+p scores.last

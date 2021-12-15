@@ -13,5 +13,5 @@ end
 
 numbers.each do |pick| 
   boards.map! { |board| board.map { |num| num == pick ? 0 : num }}
-  boards.each { |board| return p "BINGO: #{board.sum * pick}" if has_won?(board) }
+        .each { |board| return p "BINGO: #{board.sum * pick}" if has_won?(board) }
 end
