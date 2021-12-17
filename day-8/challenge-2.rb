@@ -25,22 +25,20 @@ class Challenge
 
   def calculate_code(set)
     @set = set.map { |num| num.chars }
-    code = {
-      1 => set_number(2, []),
-      4 => set_number(4, []),
-      7 => set_number(3, []),
-      8 => set_number(7, []),
-    }
-
+    code = {}
+    code[1] = set_number(2, [])
+    code[4] = set_number(4, [])
+    code[7] = set_number(3, [])
+    code[8] = set_number(7, [])
     code[3] = set_number(5, code[7])
     code[9] = set_number(6, code[4])
-    @set.reject! { |num| code.values.include?(num) }
+    update_set(code)
     code[0] = set_number(6, code[7])
-    @set.reject! { |num| code.values.include?(num) }
+    update_set(code)
     code[6] = set_number(6, [])
-    @set.reject! { |num| code.values.include?(num) }
+    update_set(code)
     code[2] = set_number(5, code[1]-code[6])
-    @set.reject! { |num| code.values.include?(num) }
+    update_set(code)
     code[5] = set_number(5, [])
 
     code.each { |k, v| code[k] = v.join }
@@ -48,6 +46,10 @@ class Challenge
 
   def set_number(length, included_shape)
     @set.select { |num| num.length == length && (included_shape - num).empty? }[0]
+  end
+
+  def update_set(code)
+    @set.reject! { |num| code.values.include?(num) }
   end
 end
 
