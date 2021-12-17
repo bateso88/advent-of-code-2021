@@ -1,35 +1,53 @@
-codes = File.read("input.txt")
-            .split("\n")
-            .map { |set| set.split(" | ")[1].split.map{ |num| num.chars.sort.join }}
+class Challenge 
 
-training_data = File.read("input.txt")
-                    .split("\n")
-                    .map { |set| set.split(" | ")[0].split.map{ |num| num.chars.sort.join }}
+  attr_reader :test_data, :training_data
 
-def calculate(set)
-  set.map! { |num| num.chars }
-  number = {
-    1 => set.select { |num| num.length == 2 }[0],
-    4 => set.select { |num| num.length == 4 }[0],
-    7 => set.select { |num| num.length == 3 }[0],
-    8 => set.select { |num| num.length == 7 }[0],
-  }
+  def initialize
+    @test_data = File.read("input.txt")
+                     .split("\n")
+                     .map { |set| set.split(" | ")[1].split.map{ |num| num.chars.sort.join }}
 
-  number[3] = set.select { |num| num.length == 5 && (number[7] - num).empty? }[0]
-  number[9] = set.select { |num| num.length == 6 && (number[4] - num).empty? }[0]
-  set.reject! { |num| number.values.include?(num)}
-  number[0] = set.select { |num| num.length == 6 && (number[7] - num).empty? }[0]
-  number[6] = set.select { |num| num.length == 6 && !(number[7] - num).empty? }[0]
-  number[5] = set.select { |num| num.length == 5 && (num - number[6]).empty? }[0]
-  number[2] = set.select { |num| num.length == 5 && !(num - number[6]).empty? }[0]
+    @training_data = File.read("input.txt")
+                        .split("\n")
+                        .map { |set| set.split(" | ")[0].split.map{ |num| num.chars.sort.join }}
+    @set=[]
+  end
 
-  number.each { |k, v| number[k] = v.join }
+  def result 
+    @result ||= training_data.map.with_index do |set, i|
+      code = calculate_code(set)
+      test_data[i].map { |num| code.key(num) }.join.to_i
+    end
+    @result.sum
+  end
+
+  private
+
+  def calculate_code(set)
+    @set = set.map { |num| num.chars }
+    code = {
+      1 => set_number(2, []),
+      4 => set_number(4, []),
+      7 => set_number(3, []),
+      8 => set_number(7, []),
+    }
+
+    code[3] = set_number(5, code[7])
+    code[9] = set_number(6, code[4])
+    @set.reject! { |num| code.values.include?(num) }
+    code[0] = set_number(6, code[7])
+    @set.reject! { |num| code.values.include?(num) }
+    code[6] = set_number(6, [])
+    @set.reject! { |num| code.values.include?(num) }
+    code[2] = set_number(5, code[1]-code[6])
+    @set.reject! { |num| code.values.include?(num) }
+    code[5] = set_number(5, [])
+
+    code.each { |k, v| code[k] = v.join }
+  end
+
+  def set_number(length, included_shape)
+    @set.select { |num| num.length == length && (included_shape - num).empty? }[0]
+  end
 end
-
-res = training_data.map.with_index do |set, i|
-  numbers = calculate(set)
-  codes[i].map { |num| numbers.key(num) }.join.to_i
-end
-
-p res.sum
 
