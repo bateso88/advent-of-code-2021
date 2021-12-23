@@ -15,7 +15,7 @@ height_map.each.with_index do |row, y|
     adjacent_heights << height_map[y][x+1] if x < width - 1
     adjacent_heights << height_map[y+1][x] if y < height - 1
     if adjacent_heights.all? { |adjacent_point| adjacent_point > point }
-      low_points << { height: point, adj: adjacent_heights, coords: [y,x] } 
+      low_points << [y,x] 
     end
   end 
 end 
@@ -45,8 +45,7 @@ end
 ##### Create an array of values for the size of each basin
 
 basin_sizes = low_points.map do |low_point|
-  coords = low_point[:coords] 
-  basin = [coords]
+  basin = [low_point]
   length_before = basin.length
   length_after = basin.length + 1
 
