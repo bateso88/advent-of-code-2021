@@ -1,63 +1,66 @@
-height_map = File.read("input.txt").split.map { |row| row.chars.map(&:to_i) }
+class Challenge
 
-##### Establish low points 
+  attr_reader :height_map, :low_points, :height, :width, :valid_neighbours
 
-low_points = []
+  def initialize
+    @height_map = File.read("input.txt").split.map { |row| row.chars.map(&:to_i) }
+    @height = height_map.length
+    @width = height_map[0].length # assuming all rows are equal length
+    @low_points = []
+    @valid_neighbours = []
+  end
 
-height = height_map.length
-width = height_map[0].length # assuming all rows are equal length
+  def result 
+    calculate_low_points
+    @result ||= basin_sizes[-1] * basin_sizes[-2] * basin_sizes[-3]
+  end
 
-height_map.each.with_index do |row, y| 
-  row.each.with_index do |point, x| 
-    adjacent_heights = []
-    adjacent_heights << height_map[y-1][x] if y > 0
-    adjacent_heights << height_map[y][x-1] if x > 0
-    adjacent_heights << height_map[y][x+1] if x < width - 1
-    adjacent_heights << height_map[y+1][x] if y < height - 1
-    if adjacent_heights.all? { |adjacent_point| adjacent_point > point }
-      low_points << [y,x] 
+  private
+
+  def calculate_low_points
+    height_map.each.with_index do |row, y| 
+      row.each.with_index do |point, x| 
+        adjacent_points = []
+        adjacent_points << height_map[y-1][x] if y > 0 
+        adjacent_points << height_map[y][x-1] if x > 0
+        adjacent_points << height_map[y][x+1] if x < width - 1
+        adjacent_points << height_map[y+1][x] if y < height - 1
+        if adjacent_points.all? { |adjacent_point| adjacent_point > point }
+          low_points << [y,x] 
+        end
+      end 
+    end 
+  end
+
+  def basin_sizes
+    low_points.map do |low_point|
+      basin = [low_point]
+      starting_length = basin.length
+      updated_length = 0
+
+      until starting_length == updated_length do 
+        starting_length = basin.length
+        basin = add_valid_neighbours(basin)
+        updated_length = basin.length
+      end
+
+      basin.length
+    end.sort
+  end
+
+  def add_valid_neighbours(basin)
+    @valid_neighbours = []
+    basin.each do |y, x|
+      add_coords(x,y)
     end
-  end 
-end 
-
-##### Simplify height map 
-
-shm = height_map.map { |row| row.map { |point| point == 9 ? 0 : 1 }}
-
-##### Function to calculate and append valid neighbours to current basin values
-
-def add_valid_neighbours(basin, simple_height_map) ##### Defo needs a refactor
-  height = simple_height_map.length
-  width = simple_height_map[0].length # assuming all rows are equal length
-  valid_neighbours = []
-  basin.each do |coords|
-    y = coords[0]
-    x = coords[1]
-    valid_neighbours << [y-1,x] if y > 0 && simple_height_map[y-1][x] == 1
-    valid_neighbours << [y,x-1] if x > 0 && simple_height_map[y][x-1] == 1
-    valid_neighbours << [y,x+1] if x < width - 1 && simple_height_map[y][x+1] == 1
-    valid_neighbours << [y+1,x] if y < height - 1 && simple_height_map[y+1][x] == 1
+    basin += valid_neighbours
+    basin.uniq 
   end
-  basin << valid_neighbours
-  basin.flatten.each_slice(2).map { |coords| [coords[0], coords[1]] }.uniq 
+
+  def add_coords(x,y)
+    valid_neighbours << [y-1,x] if y > 0 && height_map[y-1][x] != 9
+    valid_neighbours << [y,x-1] if x > 0 && height_map[y][x-1] != 9
+    valid_neighbours << [y,x+1] if x < width - 1 && height_map[y][x+1] != 9
+    valid_neighbours << [y+1,x] if y < height - 1 && height_map[y+1][x] != 9
+  end
 end
-
-##### Create an array of values for the size of each basin
-
-basin_sizes = low_points.map do |low_point|
-  basin = [low_point]
-  length_before = basin.length
-  length_after = basin.length + 1
-
-  until length_before == length_after do 
-    length_before = basin.length
-    basin = add_valid_neighbours(basin, shm)
-    length_after = basin.length
-  end
-
-  basin.length
-end.sort!
-
-p basin_sizes[-1] * basin_sizes[-2] * basin_sizes[-3]
-
-##### The whole thing should probs be refactored into a class and should make use of instance variables
