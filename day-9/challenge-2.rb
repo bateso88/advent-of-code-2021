@@ -57,13 +57,7 @@ basin_sizes = low_points.map do |low_point|
   end
 
   basin.length
-end
-
-p basin_sizes.sort!
-
-p basin_sizes[-1]
-p basin_sizes[-2]
-p basin_sizes[-3]
+end.sort!
 
 p basin_sizes[-1] * basin_sizes[-2] * basin_sizes[-3]
 
