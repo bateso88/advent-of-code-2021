@@ -9,7 +9,7 @@ bracket_score = { ")" => 3, "]" => 57, "}" => 1197, ">" => 25137 }
 errors = []
 score = 0
 
-lines.each.with_index do |line|
+lines.each do |line|
   open_brackets = []
   line.each.with_index do |bracket, index| 
     if is_opening?(bracket)
