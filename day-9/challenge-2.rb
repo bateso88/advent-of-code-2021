@@ -1,12 +1,13 @@
 class Challenge
 
-  attr_reader :height_map, :low_points, :height, :width, :valid_neighbours
+  attr_reader :height_map, :low_points, :height, :width, :adjacent_points, :valid_neighbours
 
   def initialize
     @height_map = File.read("input.txt").split.map { |row| row.chars.map(&:to_i) }
     @height = height_map.length
     @width = height_map[0].length # assuming all rows are equal length
     @low_points = []
+    @adjacent_points = []
     @valid_neighbours = []
   end
 
@@ -20,11 +21,8 @@ class Challenge
   def calculate_low_points
     height_map.each.with_index do |row, y| 
       row.each.with_index do |point, x| 
-        adjacent_points = []
-        adjacent_points << height_map[y-1][x] if y > 0 
-        adjacent_points << height_map[y][x-1] if x > 0
-        adjacent_points << height_map[y][x+1] if x < width - 1
-        adjacent_points << height_map[y+1][x] if y < height - 1
+        @adjacent_points = []
+        add_points(x, y)
         if adjacent_points.all? { |adjacent_point| adjacent_point > point }
           low_points << [y,x] 
         end
@@ -55,6 +53,13 @@ class Challenge
     end
     basin += valid_neighbours
     basin.uniq 
+  end
+
+  def add_points(x, y)
+    adjacent_points << height_map[y-1][x] if y > 0 
+    adjacent_points << height_map[y][x-1] if x > 0
+    adjacent_points << height_map[y][x+1] if x < width - 1
+    adjacent_points << height_map[y+1][x] if y < height - 1
   end
 
   def add_coords(x,y)
