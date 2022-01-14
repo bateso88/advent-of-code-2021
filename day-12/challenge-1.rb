@@ -24,7 +24,7 @@ class Challenge
   end
 
   def result
-    until paths.all? { |path| path[-1].name == "end"}
+    until paths.all? { |path| completed?(path) }
       iterate_paths
     end
     show_paths
@@ -36,39 +36,46 @@ class Challenge
   attr_reader :caves, :paths
 
   def iterate_paths
-    updated_paths = []
+    @updated_paths = []
 
     paths.each do |path|
-      last_cave = path[-1]
-
-      if last_cave.name == "end"
-        updated_paths << path
-        next
-      end
-
-      last_cave.neighbours.each do |neighbour|
-        next_cave = find_cave(neighbour)
-
-        next if already_visited?(next_cave, path) && small?(next_cave)
-
-        updated_paths << extended_path(path, next_cave)
-      end
+      calculate_extended_paths(path)
     end
 
-    @paths = updated_paths
+    @paths = @updated_paths.clone
   end
 
-  def already_visited?(cave, path)
-    path.include?(cave) && cave.category == "SMALL"
+  def calculate_extended_paths(path)
+    if completed?(path)
+      @updated_paths << path
+      return
+    end
+    last_cave(path).neighbours.each do |neighbour|
+      add_cave(path, neighbour)
+    end
   end
 
-  def small?(cave)
-    cave.category == "SMALL"
+  def add_cave(path, neighbour)
+    next_cave = find_cave(neighbour)
+    return if already_visited?(next_cave, path) && small?(next_cave)
+    @updated_paths << extended_path(path, next_cave)
   end
 
   def extended_path(path, cave)
     new_path = path.clone
     new_path << cave
+  end
+
+  def completed?(path)
+    last_cave(path).name == "end"
+  end
+
+  def already_visited?(cave, path)
+    path.include?(cave)
+  end
+
+  def small?(cave)
+    cave.category == "SMALL"
   end
 
   def show_paths
@@ -78,5 +85,9 @@ class Challenge
 
   def find_cave(name)
     caves.find { |cave| cave.name == name }
+  end
+
+  def last_cave(path)
+    path[-1]
   end
 end
