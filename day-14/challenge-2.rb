@@ -5,17 +5,16 @@ class Challenge
   def initialize
     @polymer = "NBOKHVHOSVKSSBSVVBCS"
     @pairs = @polymer.chars.each_cons(2).map { |a,b| [a,b] }
-                            .each_with_object(Hash.new(0)) { |letter, new_hash| new_hash[letter] += 1 }
+                           .each_with_object(Hash.new(0)) { |letter, new_hash| new_hash[letter] += 1 }
     @codes = File.read("input.txt").split("\n").map { |line| line.split(" -> ") }.map { |line| [line[0].chars, line[1]] }.to_h
   end
 
   def result 
     40.times { step }
     totals = Hash.new(0)
-    pairs.each { |(a,b),count| totals[a] += count }
+    pairs.each { |(a,b), count| totals[a] += count }
     totals[polymer.chars.last] += 1
-    min,max = totals.values.minmax
-    p totals
+    min, max = totals.values.minmax
     p max - min
   end
 
