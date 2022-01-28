@@ -10,6 +10,10 @@ class Challenge
   def result 
     10.times { step }
     polymer
+    count = polymer.chars.each_with_object(Hash.new(0)) do |letter, new_hash|
+      new_hash[letter] += 1
+    end
+    count.max_by { |k,v| v }[1] - count.min_by { |k,v| v }[1]
   end
 
   def step
