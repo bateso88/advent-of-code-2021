@@ -13,15 +13,9 @@ class Challenge
   
   def result
     loop do
-      # SET NODE WITH SMALLEST RISK VALUE AS CURRENT NODE
-      current_coords, current_risk = unvisited_nodes.min_by{ |k, v| v }
-      # FIND ALL UNVISITED NEIGHBOURS OF THE CURRENT NODE AND UPDATE VALUES
-      neighbours(current_coords).each do |neighbour|
-        unvisited_nodes[neighbour] = current_risk + risk(neighbour) if unvisited_nodes[neighbour] > current_risk + risk(neighbour)
-      end
-      # BREAK IF JUST VISTED FINAL DESTINATION
+      current_coords, current_risk = unvisited_nodes.min_by{ |k, v| v } # Smallest total risk
+      unvisited_neighbours(current_coords).each { |neighbour| update_risk(neighbour, current_risk) }
       break if current_coords == END_COORDS
-      # REMOVE CURRENT NODE FROM UNVISITED NODES
       unvisited_nodes.delete(current_coords)
     end
     unvisited_nodes[END_COORDS]
@@ -29,7 +23,11 @@ class Challenge
 
   private
 
-  def neighbours(coords)
+  def update_risk(neighbour, current_risk)
+    unvisited_nodes[neighbour] = current_risk + risk(neighbour) if unvisited_nodes[neighbour] > current_risk + risk(neighbour)
+  end
+
+  def unvisited_neighbours(coords)
     y, x = coords
     neighbours = []
     neighbours << [y - 1, x] if y > 0 && unvisited_nodes.include?([y - 1, x])
