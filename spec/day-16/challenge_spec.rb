@@ -12,7 +12,7 @@ describe Challenge do
     end
     context 'result' do
       it "calculates correct sum of versions" do
-        expect(challenge.result).to eq(6)
+        expect(challenge.result(challenge.binary)).to eq(6)
       end
     end
   end
@@ -21,7 +21,7 @@ describe Challenge do
     let(:challenge) { Challenge.new("38006F45291200") }
 
     it "calculates correct result" do
-      expect(challenge.result).to eq(9)
+      expect(challenge.result(challenge.binary)).to eq(9)
     end
   end
 
@@ -29,7 +29,7 @@ describe Challenge do
     let(:challenge) { Challenge.new("EE00D40C823060") }
 
     it "calculates correct result" do
-      expect(challenge.result).to eq(14)
+      expect(challenge.result(challenge.binary)).to eq(14)
     end
   end
 end
