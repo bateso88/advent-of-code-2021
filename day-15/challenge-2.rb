@@ -1,6 +1,5 @@
 class Challenge
 
-  # END_COORDS = [99, 99]
   END_COORDS = [499, 499]
 
   attr_reader :cave, :unvisited_nodes
@@ -22,11 +21,6 @@ class Challenge
     end
     unvisited_nodes[END_COORDS]
   end
-
-  # def show(grid)
-  #   grid.each { |row| p row }
-  #   return
-  # end
   
   private
 
