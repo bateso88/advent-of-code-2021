@@ -24,4 +24,12 @@ describe Challenge do
       expect(challenge.result).to eq(9)
     end
   end
+
+  context "EE00D40C823060" do
+    let(:challenge) { Challenge.new("EE00D40C823060") }
+
+    it "calculates correct result" do
+      expect(challenge.result).to eq(14)
+    end
+  end
 end
