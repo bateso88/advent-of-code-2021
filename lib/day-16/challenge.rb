@@ -2,58 +2,51 @@ class Challenge
   attr_reader :binary, :versions
 
   def initialize(number = File.read("input.txt"))
-    # "8A004A801A8002F478"
-    # "620080001611562C8802118E34"
     @binary = number.hex.to_s(2).rjust(number.size*4, '0').chars
     @versions = []
-    # @layer = 1
-    # @complete = false
   end
 
   def result
-    version = decimal_value_of_first(3)
+    version = decimal_value_of_first(3, binary)
     @versions << version
+    type_id = decimal_value_of_first(3, binary)
+    
+    operator if type_id != 4 
     versions.sum
   end
-
-  def step
-    # show
-    version = decimal_value_of_first(3)
+  
+  def operator
+    length_type_id = decimal_value_of_first(1, binary) #Not doing anything with this yet
+    p length_of_children = decimal_value_of_first(15, binary)
+    p children = first(length_of_children, binary)
+    
+    version = decimal_value_of_first(3, children)
     @versions << version
-    type_id = decimal_value_of_first(3)
-    # p version
-    # p type_id
-    show
-    # p "do_something" if literal?(type_id)
-    if !literal?(type_id) 
-      length_type_id = binary.shift.to_i
-      p length_type_id
-      if length_type_id == 0 
-        p "length of sub-packets"
-        p length_of_sub_packets = decimal_value_of_first(15)
-      else
-        p "number of sub-packets"
-        p number_of_sub_packets = decimal_value_of_first(11)
-        p version = decimal_value_of_first(3)
-        @versions << version
-        p type_id = decimal_value_of_first(3)   
+    type_id = decimal_value_of_first(3, children)
+    if type_id == 4
+      p children 
+      number=[1]
+      until number[0] != "0"
+        number = first(5, children)
+        p number
       end
-      show
     end
+    version = decimal_value_of_first(3, children)
+    @versions << version
+    type_id = decimal_value_of_first(3, children)
+    p versions
+
 
   end
+
 
   private
 
-  def show 
-    p binary.join
+  def first(digits, binary)
+    binary.shift(digits)
   end
 
-  def literal?(type_id)
-    type_id == 4
-  end
-
-  def decimal_value_of_first(digits)
+  def decimal_value_of_first(digits, binary)
     binary.shift(digits).join.to_i(2)
   end
 end
