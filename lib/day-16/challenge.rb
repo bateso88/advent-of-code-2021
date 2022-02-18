@@ -1,15 +1,3 @@
-class Packet
-  def initialize(binary)
-    @binary = binary
-    @version = decimal_value_of_first(3)
-    
-  end
-  
-  def decimal_value_of_first(digits)
-    binary.shift(digits).join.to_i(2)
-  end
-end
-
 class Challenge
   attr_reader :binary, :versions
 
@@ -19,6 +7,13 @@ class Challenge
     @binary = number.hex.to_s(2).rjust(number.size*4, '0').chars
     @versions = []
     # @layer = 1
+    # @complete = false
+  end
+
+  def result
+    version = decimal_value_of_first(3)
+    @versions << version
+    versions.sum
   end
 
   def step
@@ -41,23 +36,7 @@ class Challenge
         p number_of_sub_packets = decimal_value_of_first(11)
         p version = decimal_value_of_first(3)
         @versions << version
-        p type_id = decimal_value_of_first(3)
-        show
-        # in this example is operator so take length_type which is 1
-        binary.shift.to_i
-        p decimal_value_of_first(11)
-
-        p version = decimal_value_of_first(3)
-        @versions << version
-        p type_id = decimal_value_of_first(3)
-        show
-        # length_type id is 0 
-        binary.shift.to_i
-        p decimal_value_of_first(15)
-        
-        p version = decimal_value_of_first(3)
-        @versions << version
-        p type_id = decimal_value_of_first(3)        
+        p type_id = decimal_value_of_first(3)   
       end
       show
     end
