@@ -35,8 +35,7 @@ class Challenge
     @versions << version
     type_id = decimal_value_of_first(3, children)
     p versions
-
-
+    p children
   end
 
 
