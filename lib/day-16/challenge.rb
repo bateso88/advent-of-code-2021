@@ -1,10 +1,24 @@
+class Packet
+  def initialize(binary)
+    @binary = binary
+    @version = decimal_value_of_first(3)
+    
+  end
+  
+  def decimal_value_of_first(digits)
+    binary.shift(digits).join.to_i(2)
+  end
+end
+
 class Challenge
   attr_reader :binary, :versions
 
   def initialize(number = File.read("input.txt"))
     # "8A004A801A8002F478"
+    # "620080001611562C8802118E34"
     @binary = number.hex.to_s(2).rjust(number.size*4, '0').chars
     @versions = []
+    # @layer = 1
   end
 
   def step
@@ -47,6 +61,7 @@ class Challenge
       end
       show
     end
+
   end
 
   private
