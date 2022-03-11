@@ -21,30 +21,30 @@ class Challenge
       end
       number << first(4, binary)
     else 
-      operator
+      operator(binary)
     end
     
     p versions
     versions.sum
   end
   
-  def operator
-    length_type_id = binary.shift
-    if length_type_id == "0" # TOTAL LENGTH OF CHILDREN
-      packet_length = decimal_value_of_first(15, binary)
+  def operator(packet)
+    length_type_id = packet.shift
+    if length_type_id == "0" # TOTAL LENGTH OF PACKET
+      packet_length = decimal_value_of_first(15, packet)
       p "packet_length: #{packet_length}"
-      sub_packet = first(packet_length, binary)
+      sub_packet = first(packet_length, packet)
 
       until sub_packet.empty?
         result(sub_packet)
       end
 
-    else # NUMBER OF CHILDREN
-      packet_count = decimal_value_of_first(11, binary)
+    else # NUMBER OF SUB PACKETS
+      packet_count = decimal_value_of_first(11, packet)
       p "packet_count: #{packet_count}"
 
       packet_count.times do
-        result(binary)
+        result(packet)
       end
     end
   end
