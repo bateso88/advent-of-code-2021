@@ -11,21 +11,20 @@ class Challenge
     @sum_of_versions += version
     type_id = decimal_value_of_first(3, packet)
 
-    if type_id == 4
+    if type_id == 4 # LITERAL
       while first(1, packet) == "1"
         first(4, packet)
       end
       first(4, packet)
     else 
-      operator(packet)
+      operator(packet) # OPERATOR
     end
     
     sum_of_versions
   end
   
   def operator(packet)
-    length_type_id = packet.shift
-    if length_type_id == "0" # TOTAL LENGTH OF PACKET
+    if packet.shift == "0" # TOTAL LENGTH OF PACKET
       packet_length = decimal_value_of_first(15, packet)
       sub_packet = first(packet_length, packet)
 
